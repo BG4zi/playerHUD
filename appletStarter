@@ -1,0 +1,22 @@
+#!/bin/bash
+
+PIDFILE="/tmp/playerhud_tray.pid"
+
+# Kill old ones
+if [ -f "$PIDFILE" ]; then
+    OLD_PID=$(cat "$PIDFILE")
+    if kill -0 "$OLD_PID" 2>/dev/null; then
+        kill "$OLD_PID"
+        sleep 0.1
+    fi
+    rm -f "$PIDFILE"
+fi
+
+# Initialise a fresh one
+yad --notification \
+    --image=media-playback-start \
+    --command="$HOME/Work/playerHUD/i3playerHUD" \
+    --text="PlayerHUD" &
+
+# save PID 
+echo $! > "$PIDFILE"

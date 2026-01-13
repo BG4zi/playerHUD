@@ -1,0 +1,25 @@
+#!/bin/sh
+set -eu
+
+BIN="$HOME/Work/playerHUD/playerhud"
+
+if pgrep -x playerhud >/dev/null; then
+  pkill -x playerhud
+  exit 0
+fi
+
+
+("$BIN" >&1) &
+PID=$!
+
+for i in 1 2 3 4 5 6 7 8 9 10; do
+  if ! kill -0 "$PID" 2>/dev/null; then
+    echo "playerhud died early; see $LOG" >>"$LOG"
+    exit 1
+  fi
+  i3-msg '[class="playerhud"] floating enable, move position center, border pixel 0, sticky enable' >/dev/null 2>&1 || true
+  sleep 0.05
+done
+
+exit 0
+
